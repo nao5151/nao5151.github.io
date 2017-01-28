@@ -1,0 +1,24 @@
+body {
+  text-align: center;
+}
+
+ol {
+  display: inline-block;
+  margin: 0 auto;
+}
+
+ol li {
+  margin: 0 auto 1em;
+}
+
+#my-video {
+  display: none;
+}
+
+#remote-video {
+  display: block;
+  width: 450px;
+  height: calc(450px * 0.75);
+  margin: 0 auto;
+  border: 1px dashed #6688EE;
+}

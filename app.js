@@ -1,300 +1,254 @@
-let localVideo       = document.getElementById('local_video')
-let remoteVideo      = document.getElementById('remote_video')
-let localStream      = null
-let peerConnection   = null
-let textForSendSdp   = document.getElementById('text_for_send_sdp')
-let textToReceiveSdp = document.getElementById('text_for_receive_sdp')
 // --- prefix -----
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
 const RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection
 const RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription
-// -------- websocket ----
-// please use node.js app
-//
-// or you can use chrome app (only work with Chrome)
-//  https://chrome.google.com/webstore/detail/simple-message-server/bihajhgkmpfnmbmdnobjcdhagncbkmmp
-//
-let wsUrl = 'ws://localhost:3001/'
-let ws = new WebSocket(wsUrl)
 
-ws.onopen = function(evt) {
-  console.log('ws open()')
-}
-ws.onerror = function(err) {
-  console.error('ws onerror() ERR:', err)
-}
-ws.onmessage = function(evt) {
-  console.log('ws onmessage() data:', evt.data)
-  let message = JSON.parse(evt.data)
-  if (message.type === 'offer') {
-    // -- got offer ---
-    console.log('Received offer ...')
-    textToReceiveSdp.value = message.sdp
-    let offer = new RTCSessionDescription(message)
-    setOffer(offer)
-  }
-  else if (message.type === 'answer') {
-    // --- got answer ---
-    console.log('Received answer ...')
-    textToReceiveSdp.value = message.sdp
-    let answer = new RTCSessionDescription(message)
-    setAnswer(answer)
-  }
-}
-
-// ---------------------- media handling -----------------------
-// start local video
-function startVideo() {
-  getDeviceStream({video: true, audio: false})
-  .then(function (stream) { // success
-    localStream = stream
-    playVideo(localVideo, stream)
-  }).catch(function (error) { // error
-    console.error('getUserMedia error:', error)
-    return
-  })
-}
-// stop local video
-function stopVideo() {
-  pauseVideo(localVideo)
-  stopLocalStream(localStream)
-}
-function stopLocalStream(stream) {
-  let tracks = stream.getTracks()
-  if (! tracks) {
-    console.warn('NO tracks')
-    return
+class WS extends WebSocket {
+  constructor(URL) {
+    super(URL)
+    this.peer = null
+    this.onopen = this.open
+    this.onerror = this.error
   }
 
-  for (let track of tracks) {
-    track.stop()
+  setup(peer) {
+    this.peer = peer
+    this.onmessage = this.message
   }
-}
 
-function getDeviceStream(option) {
-  if ('getUserMedia' in navigator.mediaDevices) {
-    console.log('navigator.mediaDevices.getUserMadia')
-    return navigator.mediaDevices.getUserMedia(option)
+  open() {
+    alert('Let\'s call')
   }
-  else {
-    console.log('wrap navigator.getUserMadia with Promise')
-    return new Promise(function(resolve, reject){
-      navigator.getUserMedia(option,
-        resolve,
-        reject
-      )
+
+  error(err) {
+    alert('faild! check console log')
+    console.error('ws onerror() ERR:', err)
+  }
+
+  message(evt) {
+    let message = JSON.parse(evt.data)
+    if (message.type === 'offer') {
+      // -- got offer ---
+      console.log('Received offer ...')
+      let offer = new RTCSessionDescription(message)
+      this.setOffer(offer)
+    } else if (message.type === 'answer') {
+      // --- got answer ---
+      console.log('Received answer ...')
+      let answer = new RTCSessionDescription(message)
+      this.setAnswer(answer)
+    }
+  }
+
+  setOffer(sessionDescription) {
+    this.peer.setRemoteDescription(sessionDescription)
+    .then(() => {
+      console.log('setRemoteDescription(offer) succsess in promise')
+      this.peer.makeAnswer()
+    }).catch(err => {
+      console.error('setRemoteDescription(offer) ERROR: ', err)
+    })
+  }
+
+  setAnswer(sessionDescription) {
+    if (!this.peer) {
+      console.error('peerConnection NOT exist!')
+      return
+    }
+    this.peer.setRemoteDescription(sessionDescription)
+    .catch(err => {
+      console.error('setRemoteDescription(answer) ERROR: ', err)
     })
   }
 }
-function playVideo(element, stream) {
-  if ('srcObject' in element) {
-    element.srcObject = stream
-  }
-  else {
-    element.src = window.URL.createObjectURL(stream)
-  }
-  element.play()
-  element.volume = 0
-}
-function pauseVideo(element) {
-  element.pause()
-  if ('srcObject' in element) {
-    element.srcObject = null
-  }
-  else {
-    if (element.src && (element.src !== '') ) {
-      window.URL.revokeObjectURL(element.src)
-    }
-    element.src = ''
-  }
-}
-// ----- hand signaling ----
-function onSdpText() {
-  let text = textToReceiveSdp.value
-  if (peerConnection) {
-    console.log('Received answer text...')
-    let answer = new RTCSessionDescription({
-      type : 'answer',
-      sdp : text,
-    })
-    setAnswer(answer)
-  }
-  else {
-    console.log('Received offer text...')
-    let offer = new RTCSessionDescription({
-      type : 'offer',
-      sdp : text,
-    })
-    setOffer(offer)
-  }
-  textToReceiveSdp.value =''
-}
 
-function sendSdp(sessionDescription) {
-  console.log('---sending sdp ---')
-  textForSendSdp.value = sessionDescription.sdp
-  /*---
-  textForSendSdp.focus()
-  textForSendSdp.select()
-  ----*/
-  let message = JSON.stringify(sessionDescription)
-  console.log('sending SDP=' + message)
-  ws.send(message)
-}
-// ---------------------- connection handling -----------------------
-function prepareNewConnection() {
-  let pc_config = {"iceServers":[]}
-  let peer = new RTCPeerConnection(pc_config)
-  // --- on get remote stream ---
-  if ('ontrack' in peer) {
-    peer.ontrack = function(event) {
-      console.log('-- peer.ontrack()')
-      let stream = event.streams[0]
-      playVideo(remoteVideo, stream)
-    }
+class MyStream {
+  constructor() {
+    this.stream = null
   }
-  else {
-    peer.onaddstream = function(event) {
-      console.log('-- peer.onaddstream()')
-      let stream = event.stream
-      playVideo(remoteVideo, stream)
-    }
-  }
-  // --- on get local ICE candidate
-  peer.onicecandidate = function (evt) {
-    if (evt.candidate) {
-      console.log(evt.candidate)
-      // Trickle ICE の場合は、ICE candidateを相手に送る
-      // Vanilla ICE の場合には、何もしない
+
+  getDeviceStream(options) {
+    if ('getUserMedia' in navigator.mediaDevices) {
+      return navigator.mediaDevices.getUserMedia(options)
     } else {
-      console.log('empty ice event')
-      // Trickle ICE の場合は、何もしない
-      // Vanilla ICE の場合には、ICE candidateを含んだSDPを相手に送る
-      sendSdp(peer.localDescription)
+      return new Promise((resolve, reject) => {
+        navigator.getUserMedia(options, resolve, reject)
+      })
     }
   }
-  // --- when need to exchange SDP ---
-  peer.onnegotiationneeded = function(evt) {
-    console.log('-- onnegotiationneeded() ---')
+
+  start(callback) {
+    this.getDeviceStream({ video: true, audio: true })
+    .then(stream => {
+      this.stream = stream
+      callback()
+    }).catch(error => {
+      console.error('getUserMedia error:', error)
+      return
+    })
   }
-  // --- other events ----
-  peer.onicecandidateerror = function (evt) {
-    console.error('ICE candidate ERROR:', evt)
-  }
-  peer.onsignalingstatechange = function() {
-    console.log('== signaling status=' + peer.signalingState)
-  }
-  peer.oniceconnectionstatechange = function() {
-    console.log('== ice connection status=' + peer.iceConnectionState)
-    if (peer.iceConnectionState === 'disconnected') {
-      console.log('-- disconnected --')
-      hangUp()
+
+  stop() {
+    const tracks = this.stream.getTracks()
+    if (!tracks) {
+      console.warn('NO tracks')
+      return
+    }
+
+    for (let track of tracks) {
+      track.stop()
     }
   }
-  peer.onicegatheringstatechange = function() {
-    console.log('==***== ice gathering state=' + peer.iceGatheringState)
-  }
-
-  peer.onconnectionstatechange = function() {
-    console.log('==***== connection state=' + peer.connectionState)
-  }
-  peer.onremovestream = function(event) {
-    console.log('-- peer.onremovestream()')
-    pauseVideo(remoteVideo)
-  }
-
-
-  // -- add local stream --
-  if (localStream) {
-    console.log('Adding local stream...')
-    peer.addStream(localStream)
-  }
-  else {
-    console.warn('no local stream, but continue.')
-  }
-  return peer
-}
-function makeOffer() {
-  peerConnection = prepareNewConnection()
-  peerConnection.createOffer()
-  .then(function (sessionDescription) {
-    console.log('createOffer() succsess in promise')
-    return peerConnection.setLocalDescription(sessionDescription)
-  }).then(function() {
-    console.log('setLocalDescription() succsess in promise')
-    // -- Trickle ICE の場合は、初期SDPを相手に送る --
-    // -- Vanilla ICE の場合には、まだSDPは送らない --
-    //sendSdp(peerConnection.localDescription)
-  }).catch(function(err) {
-    console.error(err)
-  })
-}
-function setOffer(sessionDescription) {
-  if (peerConnection) {
-    console.error('peerConnection alreay exist!')
-  }
-  peerConnection = prepareNewConnection()
-  peerConnection.setRemoteDescription(sessionDescription)
-  .then(function() {
-    console.log('setRemoteDescription(offer) succsess in promise')
-    makeAnswer()
-  }).catch(function(err) {
-    console.error('setRemoteDescription(offer) ERROR: ', err)
-  })
 }
 
-function makeAnswer() {
-  console.log('sending Answer. Creating remote session description...' )
-  if (! peerConnection) {
-    console.error('peerConnection NOT exist!')
-    return
+class RemoteVideo {
+  constructor(id = 'remote-video') {
+    this.elem = document.getElementById(id)
+    // this.elem.volume = 0
+    this.stream = null
   }
 
-  peerConnection.createAnswer()
-  .then(function (sessionDescription) {
-    console.log('createAnswer() succsess in promise')
-    return peerConnection.setLocalDescription(sessionDescription)
-  }).then(function() {
-    console.log('setLocalDescription() succsess in promise')
-    // -- Trickle ICE の場合は、初期SDPを相手に送る --
-    // -- Vanilla ICE の場合には、まだSDPは送らない --
-    //sendSdp(peerConnection.localDescription)
-  }).catch(function(err) {
-    console.error(err)
-  })
-}
-function setAnswer(sessionDescription) {
-  if (! peerConnection) {
-    console.error('peerConnection NOT exist!')
-    return
+  playVideo() {
+    if ('srcObject' in this.elem) {
+      this.elem.srcObject = this.stream
+    } else {
+      this.elem.src = window.URL.createObjectURL(this.stream)
+    }
+    this.elem.play()
   }
-  peerConnection.setRemoteDescription(sessionDescription)
-  .then(function() {
-    console.log('setRemoteDescription(answer) succsess in promise')
-  }).catch(function(err) {
-    console.error('setRemoteDescription(answer) ERROR: ', err)
-  })
+
+  stop() {
+    this.pauseVideo()
+    this.stopStream()
+  }
+
+  pauseVideo() {
+    this.elem.pause()
+    if ('srcObject' in this.elem) {
+      this.elem.srcObject = null
+    } else {
+      if (this.elem.src && (this.elem.src !== '')) {
+        window.URL.revokeObjectURL(this.elem.src)
+      }
+      this.elem.src = ''
+    }
+  }
+
+  stopStream() {
+    const tracks = this.stream.getTracks()
+    if (!tracks) {
+      console.warn('NO tracks')
+      return
+    }
+
+    for (let track of tracks) {
+      track.stop()
+    }
+  }
 }
 
-// start PeerConnection
-function connect() {
-  if (! peerConnection) {
-    console.log('make Offer')
-    makeOffer()
+class Peer extends RTCPeerConnection {
+  constructor(ws, option) {
+    super(option)
+    this.ws = ws
+    this.remoteVideo = new RemoteVideo('remote-video')
+    this.setup()
   }
-  else {
-    console.warn('peer already exist.')
+
+  setup() {
+    if ('ontrack' in this) {
+      this.ontrack = evt => {
+        console.log('-- peer.ontrack()')
+        this.remoteVideo.stream = evt.streams[0]
+        this.remoteVideo.playVideo()
+      }
+    } else {
+      this.onaddstream = function (evt) {
+        console.log('-- peer.onaddstream()')
+        this.remoteVideo.stream = evt.stream
+        this.remoteVideo.playVideo()
+      }
+    }
+
+    // --- on get local ICE candidate
+    this.onicecandidate = evt => {
+      if (!evt.candidate) {
+        this.sendSdp()
+      }
+    }
+
+    this.oniceconnectionstatechange = () => {
+      console.log('== ice connection status=' + this.iceConnectionState)
+      if (this.iceConnectionState === 'disconnected') {
+        console.log('-- disconnected --')
+        this.hangUp()
+      }
+    }
+    this.onremovestream = evt => {
+      console.log('-- peer.onremovestream()')
+      this.remoteVideo.stop()
+    }
   }
-}
-// close PeerConnection
-function hangUp() {
-  if (peerConnection) {
+
+  makeAnswer() {
+    console.log('sending Answer. Creating remote session description...')
+    if (!this) {
+      console.error('peerConnection NOT exist!')
+      return
+    }
+
+    this.createAnswer()
+    .then(sessionDescription =>  {
+      console.log('createAnswer() succsess in promise')
+      return this.setLocalDescription(sessionDescription)
+    }).catch(function (err) {
+      console.error(err)
+    })
+  }
+
+  sendSdp() {
+    console.log('sending sdp...')
+    let message = JSON.stringify(this.localDescription)
+    this.ws.send(message)
+  }
+
+  hangUp() {
     console.log('Hang up.')
-    peerConnection.close()
-    peerConnection = null
-    pauseVideo(remoteVideo)
+    this.close()
+    this.remoteVideo.stop()
   }
-  else {
-    console.warn('peer NOT exist.')
+}
+
+window.onload = () => {
+  const wsURL = document.querySelector('[name="ws-url"]')
+  const serverConnectBtn = document.getElementById('server-connect-btn')
+
+  const callBtn = document.getElementById('call-btn')
+
+  const myStream = new MyStream()
+  let ws
+
+  serverConnectBtn.onclick = () => {
+    ws = new WS(wsURL.value)
+  }
+
+  callBtn.onclick = () => {
+    if (!ws) {
+      alert('websocket server is not connected\npush server connect button')
+      return
+    }
+
+    myStream.start(() => {
+      const peer = new Peer(ws, { iceServers: [] })
+      ws.setup(peer)
+
+      peer.addStream(myStream.stream)
+      peer.createOffer()
+      .then(sessionDescription => {
+        return peer.setLocalDescription(sessionDescription)
+      }).catch(function (err) {
+        console.error(err)
+      })
+    })
   }
 }
