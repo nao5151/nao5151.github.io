@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remodal/1.1.1/remodal-default-theme.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remodal/1.1.1/remodal.css">
+  <style>
+    .remodal-overlay.remodal-is-opening::after {
+      content: 'loading......';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: block;
+      font-size: 2em;
+      color: #fff;
+      transform: translate(-50%, -50%);
+    }
+    .danger {
+      color: red;
+    }
+  </style>
+  <script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/remodal/1.1.1/remodal.js"></script>
+</head>
+<body>
+  <div>
+    <button class="button" data-time="250">remodal open after 250ms</button>
+  </div>
+  <div>
+    <button class="button danger" data-time="300">remodal open after 300ms (remodalが閉じなくなる可能性があるタイミング)</button>
+  </div>
+  <div>
+    <button class="button" data-time="350">remodal open after 350ms</button>
+  </div>
+  <div>
+    <button class="button" data-time="1000">remodal open after 1000ms</button>
+  </div>
+  <div class="remodal" data-remodal-id="modal">
+    <button data-remodal-action="close" class="remodal-close"></button>
+    <h1>Remodal</h1>
+    <p>
+      Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.
+    </p>
+    <br>
+    <button data-remodal-action="cancel" class="remodal-cancel">Cancel</button>
+    <button data-remodal-action="confirm" class="remodal-confirm">OK</button>
+  </div>
+  <script>
+    (function($) {
+      var $remodal = $('[data-remodal-id="modal"]').remodal({hashTracking: false});
+
+      $('.button').on('click', function() {
+        $remodal.$overlay.removeClass('remodal-is-closed').addClass('remodal-is-opening').show();
+        setTimeout(function() {
+          $remodal.open();
+        }, Number($(this).data('time')));
+      });
+    })(window.jQuery);
+  </script>
+</body>
+</html>
