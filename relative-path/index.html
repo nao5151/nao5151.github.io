@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>relative path | NaoyukiMiyazaki.github.io</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/index.js"></script>
+</head>
+
+<body>
+  <h1>relative path</h1>
+  <a href="https://github.com/NaoyukiMiyazaki/NaoyukiMiyazaki.github.io/tree/master/relative-path">https://github.com/NaoyukiMiyazaki/NaoyukiMiyazaki.github.io/tree/master/relative-path</a>
+<pre><code>
+index.html
+assets
+  ├─ css
+  │    └─ style.css
+  ├─ img
+  │    ├─ 1.png
+  │    ├─ 2.png
+  │    ├─ 3.png
+  │     .
+  │     .
+  │     .
+  │
+  └─ js
+       └─ index.js
+</code></pre>
+  <table>
+    <thead>
+      <tr>
+        <th>種類</th>
+        <th>起点</th>
+        <th>code</th>
+        <th>result</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>imgタグ</th>
+        <td>index.html</td>
+        <td>
+          <pre><code>&lt;img src="assets/img/1.png" alt="1"&gt;</code></pre>
+        </td>
+        <td>
+          <img src="assets/img/1.png" alt="1">
+        </td>
+      </tr>
+      <tr>
+        <th>css url()</th>
+        <td>assets/css/style.css</td>
+        <td>
+          <pre><code>
+&lt;div class="box sample02"&gt;&lt;/div&gt;
+
+/* asset/css/style.css */
+.box {
+  width: 150px;
+  height: 150px;
+  background-size: 100% 100%;
+}
+.sample02 {
+  background-image: url('../img/2.png');
+}
+</code></pre>
+        </td>
+        <td>
+          <div class="box sample02"></div>
+        </td>
+      </tr>
+      <tr>
+        <th>inline css url()</th>
+        <td>index.html</td>
+        <th>
+          <pre><code>
+&lt;div class="box"
+  style="background-image: url('assets/img/3.png');"&gt;
+&lt;/div&gt;
+</code></pre>
+        </th>
+        <td>
+          <div class="box" style="background-image: url('assets/img/3.png');"></div>
+        </td>
+      </tr>
+      <tr>
+        <th>html script fetch</th>
+        <td>index.html</td>
+        <th>
+          <pre><code>
+&lt;img class="sample04" alt="sample04"&gt;
+&lt;script&gt;
+  fetch('assets/img/4.png')
+    .then(res => res.blob())
+    .then(blob => {
+      var img = document.querySelector('.sample04')
+      img.src = URL.createObjectURL(blob)
+    })
+&lt;/script&gt;
+  </code></pre>
+        </th>
+        <th>
+          <img class="sample04" alt="sample04">
+          <script>
+            fetch('assets/img/4.png')
+              .then(res => res.blob())
+              .then(blob => {
+                var img = document.querySelector('.sample04')
+                img.src = URL.createObjectURL(blob)
+              })
+
+          </script>
+        </th>
+      </tr>
+      <tr>
+        <th>js fetch()</th>
+        <td>index.html</td>
+        <th>
+          <pre><code>
+&lt;img class="sample05" alt="sample05"&gt;
+
+// assets/js/index.js
+fetch('assets/img/5.png')
+  .then(res => res.blob())
+  .then(blob => {
+    var img = document.querySelector('.sample04')
+    img.src = URL.createObjectURL(blob)
+  })
+</code></pre>
+        </th>
+        <td>
+          <img class="sample05" alt="sample05">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
+</html>
