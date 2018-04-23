@@ -7,6 +7,18 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>relative path | NaoyukiMiyazaki.github.io</title>
   <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      border-bottom: 1px solid #000;
+    }
+    td {
+      padding: 1em;
+    }
+  </style>
   <script src="assets/js/index.js"></script>
 </head>
 
@@ -32,15 +44,15 @@ assets
   <table>
     <thead>
       <tr>
-        <th>種類</th>
+        <th>記述</th>
         <th>起点</th>
-        <th>code</th>
-        <th>result</th>
+        <th>コード</th>
+        <th>結果</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <th>imgタグ</th>
+        <th>普通のimgタグ</th>
         <td>index.html</td>
         <td>
           <pre><code>&lt;img src="assets/img/1.png" alt="1"&gt;</code></pre>
@@ -50,7 +62,7 @@ assets
         </td>
       </tr>
       <tr>
-        <th>css url()</th>
+        <th>外部スタイルシート url</th>
         <td>assets/css/style.css</td>
         <td>
           <pre><code>
@@ -72,23 +84,23 @@ assets
         </td>
       </tr>
       <tr>
-        <th>inline css url()</th>
+        <th>インラインスタイル url</th>
         <td>index.html</td>
-        <th>
+        <td>
           <pre><code>
 &lt;div class="box"
   style="background-image: url('assets/img/3.png');"&gt;
 &lt;/div&gt;
 </code></pre>
-        </th>
+        </td>
         <td>
           <div class="box" style="background-image: url('assets/img/3.png');"></div>
         </td>
       </tr>
       <tr>
-        <th>html script fetch</th>
+        <th>内部スクリプト fetch</th>
         <td>index.html</td>
-        <th>
+        <td>
           <pre><code>
 &lt;img class="sample04" alt="sample04"&gt;
 &lt;script&gt;
@@ -100,8 +112,8 @@ assets
     })
 &lt;/script&gt;
   </code></pre>
-        </th>
-        <th>
+        </td>
+        <td>
           <img class="sample04" alt="sample04">
           <script>
             fetch('assets/img/4.png')
@@ -112,12 +124,12 @@ assets
               })
 
           </script>
-        </th>
+        </td>
       </tr>
       <tr>
-        <th>js fetch()</th>
+        <th>外部スクリプト fetch</th>
         <td>index.html</td>
-        <th>
+        <td>
           <pre><code>
 &lt;img class="sample05" alt="sample05"&gt;
 
@@ -129,7 +141,7 @@ fetch('assets/img/5.png')
     img.src = URL.createObjectURL(blob)
   })
 </code></pre>
-        </th>
+        </td>
         <td>
           <img class="sample05" alt="sample05">
         </td>
