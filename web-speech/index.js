@@ -98,12 +98,7 @@ class Speech {
 }
 
 const utterThis = new SpeechSynthesisUtterance();
-utterThis.addEventListener('error', (e) => {
-  console.error('SpeechSynthesisUtterance.onerror');
-});
-window.speechSynthesis.onvoiceschanged = (e) => {
-  console.log('speechSynthesis.onvoiceschanged', e.timeStamp);
-
+function setVoice() {
   const voices = window.speechSynthesis.getVoices()
   for (let i = 0; i < voices.length; i++) {
     if (voices[i].lang === 'ja-JP') {
@@ -111,6 +106,14 @@ window.speechSynthesis.onvoiceschanged = (e) => {
     }
   }
   utterThis.lang === 'ja-JP';
+}
+utterThis.addEventListener('error', (e) => {
+  console.error('SpeechSynthesisUtterance.onerror');
+});
+setVoice();
+window.speechSynthesis.onvoiceschanged = (e) => {
+  console.log('speechSynthesis.onvoiceschanged', e.timeStamp);
+  setVoice();
 };
 
 const speech = new Speech(utterThis);
