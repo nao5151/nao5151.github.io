@@ -7,6 +7,6 @@
     "browser-sync": "^2.24.4"
   },
   "scripts": {
-    "start": "browser-sync ./ -w"
+    "start": "browser-sync ../ -w"
   }
 }

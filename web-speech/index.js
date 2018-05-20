@@ -1,3 +1,9 @@
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('./service-worker.js')
+    .then(function () { console.log('Service Worker Registered'); });
+}
+
 const status = {
   init: 'init',
   start: 'start',
@@ -97,31 +103,57 @@ class Speech {
   }
 }
 
-const utterThis = new SpeechSynthesisUtterance();
-function setVoice() {
-  const voices = window.speechSynthesis.getVoices()
-  for (let i = 0; i < voices.length; i++) {
-    if (voices[i].lang === 'ja-JP') {
-      utterThis.voice = voices[i];
+function setVoice(uttr, lang = 'ja-JP') {
+  window.voices = window.voices || window.speechSynthesis.getVoices()
+  for (let i = 0; i < window.voices.length; i++) {
+    if (window.voices[i].lang === lang) {
+      uttr.voice = window.voices[i];
     }
   }
-  utterThis.lang === 'ja-JP';
+  uttr.lang === lang;
 }
+
+const utterThis = new SpeechSynthesisUtterance();
 utterThis.addEventListener('error', (e) => {
   console.error('SpeechSynthesisUtterance.onerror');
 });
-setVoice();
+setVoice(utterThis);
+
+const utterThis1 = new SpeechSynthesisUtterance('ゴーシュは町の活動写真館でセロを弾く係りでした。けれどもあんまり上手でないという評判でした。');
+utterThis1.addEventListener('error', (e) => {
+  console.error('SpeechSynthesisUtterance.onerror');
+});
+setVoice(utterThis1);
+const utterThis2 = new SpeechSynthesisUtterance('上手でないどころではなく実は仲間の楽手のなかではいちばん下手でしたから、いつでも楽長にいじめられるのでした。');
+utterThis2.addEventListener('error', (e) => {
+  console.error('SpeechSynthesisUtterance.onerror');
+});
+setVoice(utterThis2);
+const utterThis3 = new SpeechSynthesisUtterance('ひるすぎみんなは楽屋に円くならんで今度の町の音楽会へ出す第六交響曲の練習をしていました。');
+utterThis3.addEventListener('error', (e) => {
+  console.error('SpeechSynthesisUtterance.onerror');
+});
+setVoice(utterThis3);
+
 window.speechSynthesis.onvoiceschanged = (e) => {
   console.log('speechSynthesis.onvoiceschanged', e.timeStamp);
-  setVoice();
+  setVoice(utterThis);
 };
 
 const speech = new Speech(utterThis);
+const demoBtn = document.getElementById('demo');
 const startBtn = document.getElementById('start');
 // const pauseBtn = document.getElementById('pause');
 const stopBtn = document.getElementById('stop');
 const nextBtn = document.getElementById('next');
 const backBtn = document.getElementById('back');
+
+demoBtn.onclick = (e) => {
+  e.preventDefault();
+  window.speechSynthesis.speak(utterThis1);
+  window.speechSynthesis.speak(utterThis2);
+  window.speechSynthesis.speak(utterThis3);
+}
 
 startBtn.onclick = (e) => {
   e.preventDefault();
