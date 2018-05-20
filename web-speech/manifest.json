@@ -1,0 +1,6 @@
+{
+  "short_name": "web speech",
+  "name": "web speech sample",
+  "start_url": ".",
+  "display": "standalone"
+}
