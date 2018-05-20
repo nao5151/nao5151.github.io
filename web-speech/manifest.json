@@ -2,5 +2,22 @@
   "short_name": "web speech",
   "name": "web speech sample",
   "start_url": ".",
-  "display": "standalone"
+  "display": "standalone",
+  "icons": [{
+    "src": "./icon/128x128.png",
+    "type": "image/png",
+    "sizes": "128x128"
+  }, {
+    "src": "./icon/152x152.png",
+    "type": "image/png",
+    "sizes": "152x152"
+  }, {
+    "src": "./icon/144x144.png",
+    "type": "image/png",
+    "sizes": "144x144"
+  }, {
+    "src": "./icon/192x192.png",
+    "type": "image/png",
+    "sizes": "192x192"
+  }]
 }
