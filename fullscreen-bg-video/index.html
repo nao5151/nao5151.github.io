@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>fullscreen background video</title>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    h1 {
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+    .wrapper {
+      width: 100%;
+      height: 50vh;
+      overflow: hidden;
+      background: #000;
+    }
+    .video {
+      width: 100%;
+      height: 100%;
+    }
+    .fill {
+      object-fit: fill;
+    }
+    .cover {
+      object-fit: cover;
+    }
+    .contain {
+      object-fit: contain;
+    }
+    .none {
+      object-fit: none;
+    }
+    .scale-down {
+      object-fit: scale-down;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="#default"><pre><code>default</code></pre></a></li>
+      <li><a href="#none"><pre><code>object-fit: none;</code></pre></a></li>
+      <li><a href="#fill"><pre><code>object-fit: fill;</code></pre></a></li>
+      <li><a href="#cover"><pre><code>object-fit: cover;</code></pre></a></li>
+      <li><a href="#contain"><pre><code>object-fit: contain;</code></pre></a></li>
+      <li><a href="#scale-down"><pre><code>object-fit: scale-down;</code></pre></a></li>
+    </ul>
+  </nav>
+  <section id="default">
+    <h1><pre><code>default</code></pre></h1>
+    <div class="wrapper">
+      <video src="video01.mp4" autoPlay loop></video>
+    </div>
+  </section>
+  <section id="none">
+    <h1>
+      <pre><code>object-fit: none;</code></pre>
+    </h1>
+    <div class="wrapper">
+      <video class="video none" src="video01.mp4" autoPlay loop></video>
+    </div>
+  </section>
+  <section id="fill">
+    <h1>
+      <pre><code>object-fit: fill;</code></pre>
+    </h1>
+    <div class="wrapper">
+      <video class="video fill" src="video01.mp4" autoPlay loop></video>
+    </div>
+  </section>
+  <section id="cover">
+    <h1>
+      <pre><code>object-fit: cover;</code></pre>
+    </h1>
+    <div class="wrapper">
+      <video class="video cover" src="video01.mp4" autoPlay loop></video>
+    </div>
+  </section>
+  <section id="contain">
+    <h1>
+      <pre><code>object-fit: contain;</code></pre>
+    </h1>
+    <div class="wrapper">
+      <video class="video contain" src="video01.mp4" autoPlay loop></video>
+    </div>
+  </section>
+  <section id="scale-down">
+    <h1>
+      <pre><code>object-fit: scale-down;</code></pre>
+    </h1>
+    <div class="wrapper">
+      <video class="video scale-down" src="video01.mp4" autoPlay loop></video>
+    </div>
+  </section>
+</body>
+</html>
