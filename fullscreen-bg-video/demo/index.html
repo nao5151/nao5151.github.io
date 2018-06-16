@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>fullscreen background video demo</title>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    .header {
+      z-index: 15;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      background: #f9f9f9;
+    }
+    .fullscreen-video {
+      z-index: 1;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+    }
+    .container {
+      z-index: 10;
+      position: relative;
+      top: 100vh;
+      width: 80%;
+      max-width: 800px;
+      margin: 0 auto 2em;
+      padding: 1em;
+      background: rgba(255,255,255,.8);
+    }
+    .video {
+      width: 100%;
+      height: 100%;
+    }
+    .fill {
+      object-fit: fill;
+    }
+    .cover {
+      object-fit: cover;
+    }
+    .contain {
+      object-fit: contain;
+    }
+    .none {
+      object-fit: none;
+    }
+    .scale-down {
+      object-fit: scale-down;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>demo</h1>
+  </header>
+  <div class="fullscreen-video">
+    <video class="video cover" src="video.mp4" autoPlay loop></video>
+  </div>
+  <div class="container">
+    <h1>This is fullscreen video demo</h1>
+    <p><a href="../">../</a></p>
+    <p><a href="https://github.com/NaoyukiMiyazaki/NaoyukiMiyazaki.github.io/tree/master/fullscreen-bg-video/demo" target="_blank">github</a></p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, tenetur labore deleniti id magnam, amet, inventore saepe laborum quia velit sunt omnis quos? Unde facilis itaque nisi vero veniam earum?</p>
+  </div>
+</body>
+</html>
