@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>gradation text</title>
+  <style>
+  * {
+    text-align: center;
+  }
+
+  .text {
+    font-size: 2em;
+    font-weight: bold;
+    line-height: 1.5;
+  }
+
+  .text-gradation {
+    color: #000;
+  }
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .text-gradation {
+      background: linear-gradient(#000, #fff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+  }
+
+  .text-gradation-2 {
+    color: #a6c0ff;
+    display: inline-block;
+  }
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .text-gradation-2 {
+      background: linear-gradient(90deg, #b1dafe, #a6c0ff, #a6c0ff, #f2e2a6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+  }
+  </style>
+</head>
+<body>
+  <p class="text text-gradation">gradation text</p>
+  <p class="text text-gradation-2">gradation text</p>
+</body>
+</html>
